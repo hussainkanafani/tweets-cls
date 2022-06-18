@@ -1,4 +1,4 @@
-# Tweets Classifier
+# Disaster Tweets Classifier
 
 ## Overview
 
