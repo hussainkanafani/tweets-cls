@@ -1,4 +1,4 @@
-# tweets-cls
+# Tweets Classifier
 
 ## Overview
 
