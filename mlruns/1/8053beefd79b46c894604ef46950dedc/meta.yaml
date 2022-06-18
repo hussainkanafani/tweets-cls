@@ -1,0 +1,15 @@
+artifact_uri: file:///mnt/c/dev/nlp/tweets-cls/mlruns/1/8053beefd79b46c894604ef46950dedc/artifacts
+end_time: 1655494813477
+entry_point_name: ''
+experiment_id: '1'
+lifecycle_stage: active
+name: ''
+run_id: 8053beefd79b46c894604ef46950dedc
+run_uuid: 8053beefd79b46c894604ef46950dedc
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1655494813377
+status: 3
+tags: []
+user_id: hussain

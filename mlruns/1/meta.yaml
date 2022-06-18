@@ -1,0 +1,4 @@
+artifact_location: file:///mnt/c/dev/nlp/tweets-cls/mlruns/1
+experiment_id: '1'
+lifecycle_stage: active
+name: ml_tweets
