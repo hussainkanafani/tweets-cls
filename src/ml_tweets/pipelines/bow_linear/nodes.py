@@ -1,4 +1,8 @@
 """
+This is a boilerplate pipeline 'bow_linear'
+generated using Kedro 0.18.1
+"""
+"""
 This is a boilerplate pipeline
 generated using Kedro 0.18.1
 """

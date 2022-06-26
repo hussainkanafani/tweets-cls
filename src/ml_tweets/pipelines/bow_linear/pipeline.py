@@ -1,5 +1,5 @@
 """
-This is a boilerplate pipeline
+This is a boilerplate pipeline 'bow_linear'
 generated using Kedro 0.18.1
 """
 
@@ -14,7 +14,6 @@ def create_pipeline(**kwargs) -> Pipeline:
                 func=preprocess,
                 inputs=["tweets_train","tweets_test", "parameters"],
                 outputs=["train_vectors","test_vectors","targets"],
-                #outputs=["X_train", "X_test", "y_train", "y_test"],
                 name="preprocess",
             ),
             node(
