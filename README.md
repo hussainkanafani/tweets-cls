@@ -1,4 +1,4 @@
-# tweets-cls
+# Disaster Tweets Classifier
 
 ## Overview
 
