@@ -14,13 +14,19 @@ def create_pipeline(**kwargs) -> Pipeline:
                 node(
                 func=prepare_data,
                 inputs=["tweets_train", "parameters"],
-                outputs=["train_loader","valid_loader","vocab_size"],
+                outputs=["train_loader","valid_loader","vocab_size","text_pipeline"],
                 name="prepare_data",
             ),
             node(
                 func=fit_and_evaluate,
-                inputs=["train_loader","valid_loader","vocab_size"],
-                outputs=["train_loss","val_loss"],
+                inputs=["train_loader","valid_loader","vocab_size","text_pipeline","sample_submission","kaggle_submission"],
+                outputs="torch_model",
                 name="fit_and_evaluate",
-            )
+            ),
+            #node(
+            #    func=evaluate,
+            #    inputs=["model","sample_submissions"],
+            #    outputs=[""],
+            #    name="fit",
+            #)
     ])

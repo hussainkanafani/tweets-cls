@@ -34,7 +34,6 @@ def prepare_data(
     logging.info(train_dataset.df.head())
 
     text_pipeline,label_pipeline,vocab_size=get_vocab(train_dataset)
-        #dataloader=collate_data_loader(train_dataset)
     
     num_train = int(len(train_dataset) * 0.95)
     
@@ -46,12 +45,12 @@ def prepare_data(
     train_dataloader = DataLoader(split_train_, batch_size=BATCH_SIZE, shuffle=BATCH_SIZE, collate_fn=lambda batch: collate_batch(batch, text_pipeline, label_pipeline))
     valid_dataloader = DataLoader(split_valid_, batch_size=BATCH_SIZE, shuffle=BATCH_SIZE, collate_fn=lambda batch: collate_batch(batch, text_pipeline, label_pipeline))
 
-    return train_dataloader,valid_dataloader,vocab_size
+    return train_dataloader,valid_dataloader,vocab_size,text_pipeline
 
 
-def fit_and_evaluate(train_dataloader: DataLoader, valid_dataloader: DataLoader, vocab_size: int)-> Tuple[(List,List)]:
+def fit_and_evaluate(train_dataloader: DataLoader, valid_dataloader: DataLoader, vocab_size: int, text_pipeline:any, sample_submission:pd.DataFrame,kaggle_submission: pd.DataFrame)-> Tuple[(List,List)]:
     
-    EPOCHS = 10 # epoch
+    EPOCHS = 1 # epoch
     LR = 5  # learning rate
     
     #model params
@@ -71,5 +70,29 @@ def fit_and_evaluate(train_dataloader: DataLoader, valid_dataloader: DataLoader,
     )
 
     train_loss,val_loss=trainer.fit(train_dataloader, valid_dataloader, EPOCHS)
-    return train_loss,val_loss
+    
+    #return train_loss,val_loss
+    return trainer.model
+    
+    #logging.info("predict target of test data")
+    #texts= ["Typhoon Soudelor kills 28 in China and Taiwan",
+    #"We're shaking...It's an earthquake", 
+    #"They'd probably still show more life than Arsenal did yesterday, eh? EH?",
+    #"Hey! How are you",
+    #"What a nice hat",
+    #"Fuck off!"]
+    #with torch.no_grad():
+    #    for text in texts:
+    #        text = torch.tensor(text_pipeline(text))
+    #        output = trainer.model(text, torch.tensor([0]))
+    #        logging.info(f"MODEL OUTPUT: {output}")
         
+
+    #logging.info("predict targets of test data")
+    #sample_submission["target"] = clf.predict(test_vectors)
+#
+    #logging.info(f"sample submissions look like this: {sample_submission.head()}")
+#
+    #logging.info(f"save submission dataframe to {parameters['kaggle_submissions']}")
+    #sample_submission.to_csv(parameters['kaggle_submissions'], index=False)
+    

@@ -41,3 +41,20 @@
 #
 # This is a data set used by the "Hello World" example pipeline provided with the project
 # template. Please feel free to remove it once you remove the example pipeline.
+tweets_train:
+  type: pandas.CSVDataSet
+  filepath: data/01_raw/train.csv
+
+tweets_test:
+  type: pandas.CSVDataSet
+  filepath: data/01_raw/test.csv
+
+# Catalogs for Model results submisisons on kaggle
+sample_submission:
+  type: pandas.CSVDataSet
+  filepath:  data/01_raw/sample_submission.csv
+
+kaggle_submission:
+  type: pandas.CSVDataSet
+  filepath: data/08_reporting/kaggle_submissions.csv
+  layer: model_evaluation

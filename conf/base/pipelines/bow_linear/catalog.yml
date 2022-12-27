@@ -46,11 +46,10 @@ example_iris_data:
   type: pandas.CSVDataSet
   filepath: data/01_raw/iris.csv
 
-
-tweets_train:
-  type: pandas.CSVDataSet
-  filepath: data/01_raw/train.csv
-
-tweets_test:
-  type: pandas.CSVDataSet
-  filepath: data/01_raw/test.csv
+#tweets_train:
+#  type: pandas.CSVDataSet
+#  filepath: data/01_raw/train.csv
+#
+#tweets_test:
+#  type: pandas.CSVDataSet
+#  filepath: data/01_raw/test.csv
