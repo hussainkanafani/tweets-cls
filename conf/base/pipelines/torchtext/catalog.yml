@@ -1,0 +1,11 @@
+torch_model: 
+  type: ml_tweets.extras.datasets.torch_model.TorchModelDataSet
+  filepath: data/06_models/torchtext/torchtext_classification
+  versioned: true
+  model: torchtext_classification
+
+vocab_pkl:
+  type: pickle.PickleDataSet
+  filepath: data/05_model_input/vocab.pkl
+  versioned: true
+  
