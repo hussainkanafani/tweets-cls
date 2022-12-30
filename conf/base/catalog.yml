@@ -50,11 +50,10 @@ tweets_test:
   filepath: data/01_raw/test.csv
 
 # Catalogs for Model results submisisons on kaggle
-sample_submission:
-  type: pandas.CSVDataSet
-  filepath:  data/01_raw/sample_submission.csv
-
 kaggle_submission:
   type: pandas.CSVDataSet
   filepath: data/08_reporting/kaggle_submissions.csv
+  save_args:
+    index: False
+  versioned: true
   layer: model_evaluation

@@ -15,7 +15,7 @@ from torch.utils.data.dataset import random_split
 from .data_wrapper import (
     DataWrapper,
     collate_batch,
-    get_vocab,
+    tokenizer
 )
 from .model import TextClassificationModel
 from .trainer import Trainer
@@ -33,30 +33,32 @@ def prepare_data(
     train_dataset = DataWrapper(train_df)
     logging.info(train_dataset.df.head())
 
-    text_pipeline,label_pipeline,vocab_size=get_vocab(train_dataset)
+    text_pipeline= train_dataset.text_pipeline
+    label_pipeline= train_dataset.label_pipeline
     
-    num_train = int(len(train_dataset) * 0.95)
+    
+    num_train = int(len(train_dataset) * 0.90)
     
     split_train_, split_valid_ = \
         random_split(train_dataset, [num_train, len(train_dataset) - num_train])
 
-    #train_dataloader = collate_data_loader(split_train_,BATCH_SIZE,shuffle=True)
-    #valid_dataloader = collate_data_loader(split_valid_,BATCH_SIZE,shuffle=True)
     train_dataloader = DataLoader(split_train_, batch_size=BATCH_SIZE, shuffle=BATCH_SIZE, collate_fn=lambda batch: collate_batch(batch, text_pipeline, label_pipeline))
     valid_dataloader = DataLoader(split_valid_, batch_size=BATCH_SIZE, shuffle=BATCH_SIZE, collate_fn=lambda batch: collate_batch(batch, text_pipeline, label_pipeline))
 
-    return train_dataloader,valid_dataloader,vocab_size,text_pipeline
+    return train_dataloader,valid_dataloader, train_dataset.vocab
 
 
-def fit_and_evaluate(train_dataloader: DataLoader, valid_dataloader: DataLoader, vocab_size: int, text_pipeline:any, sample_submission:pd.DataFrame,kaggle_submission: pd.DataFrame)-> Tuple[(List,List)]:
+def fit(train_dataloader: DataLoader, valid_dataloader: DataLoader, vocab)-> any:
     
-    EPOCHS = 1 # epoch
-    LR = 5  # learning rate
+    EPOCHS = 30 # epoch
+    LR = 1  # learning rate
     
     #model params
     num_class = 1  
     emsize=64
     
+    vocab_size= len(vocab)
+    print(f"Vocabulary size: {vocab_size}")
 
     model = TextClassificationModel(vocab_size, emsize, num_class).to(device)
     criterion = torch.nn.BCELoss()
@@ -69,30 +71,21 @@ def fit_and_evaluate(train_dataloader: DataLoader, valid_dataloader: DataLoader,
         device=device
     )
 
-    train_loss,val_loss=trainer.fit(train_dataloader, valid_dataloader, EPOCHS)
+    trainer.fit(train_dataloader, valid_dataloader, EPOCHS)
     
-    #return train_loss,val_loss
     return trainer.model
-    
-    #logging.info("predict target of test data")
-    #texts= ["Typhoon Soudelor kills 28 in China and Taiwan",
-    #"We're shaking...It's an earthquake", 
-    #"They'd probably still show more life than Arsenal did yesterday, eh? EH?",
-    #"Hey! How are you",
-    #"What a nice hat",
-    #"Fuck off!"]
-    #with torch.no_grad():
-    #    for text in texts:
-    #        text = torch.tensor(text_pipeline(text))
-    #        output = trainer.model(text, torch.tensor([0]))
-    #        logging.info(f"MODEL OUTPUT: {output}")
-        
 
-    #logging.info("predict targets of test data")
-    #sample_submission["target"] = clf.predict(test_vectors)
-#
-    #logging.info(f"sample submissions look like this: {sample_submission.head()}")
-#
-    #logging.info(f"save submission dataframe to {parameters['kaggle_submissions']}")
-    #sample_submission.to_csv(parameters['kaggle_submissions'], index=False)
-    
+def submit(model:any, vocab:any, test_df: pd.DataFrame, parameters: Dict[str, Any]):
+    sample_submission = pd.read_csv(parameters['sample_submission'])
+
+    predictions=[]
+    with torch.no_grad():
+        for text in test_df.text:
+            text = torch.tensor(vocab(tokenizer(text)))
+            output = model(text, torch.tensor([0]))
+            predictions.append(round(output.item()))
+    #print(predictions)
+    assert len(sample_submission) == len(predictions)
+    #pd.DataFrame({'id':sample_submission['id'].values.tolist(), "target": predictions}).to_csv('submission.csv', index=False, header=True)
+    submission = pd.DataFrame({'id':sample_submission['id'].values.tolist(), "target": predictions})
+    return submission

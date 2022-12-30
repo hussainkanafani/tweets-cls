@@ -10,23 +10,6 @@ import pandas as pd
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 tokenizer = get_tokenizer('basic_english')
 
-class DataWrapper(Dataset):
- 
-  def __init__(self,df:pd.DataFrame):
-    self.df = df
-
-  def __len__(self):
-    return len(self.df)
-   
-  def __getitem__(self,idx):
-    return self.df.iloc[idx]['text'], self.df.iloc[idx]['target']
-
-
-def yield_tokens(data_iter):
-    for idx, (text, label) in enumerate(data_iter):
-      yield tokenizer(text)
-     
-
 def collate_batch(batch,text_pipeline:Callable, label_pipeline:Callable):
     label_list, text_list, offsets = [], [], [0]
     for (_text,_label) in batch:
@@ -40,12 +23,27 @@ def collate_batch(batch,text_pipeline:Callable, label_pipeline:Callable):
     return label_list.to(device), text_list.to(device), offsets.to(device)  
 
 
+class DataWrapper(Dataset):
+ 
+  def __init__(self,df:pd.DataFrame):
+    self.df = df
+    #Vocab 
+    self.vocab= self.generate_vocab(self.df.text)
+    self.vocab_length= len(self.vocab)
+    self.text_pipeline = lambda x: self.vocab(tokenizer(x))
+    self.label_pipeline = lambda x: int(x) - 1
 
+  def __len__(self):
+    return len(self.df)
+   
+  def __getitem__(self,idx):
+    return self.df.iloc[idx]['text'], self.df.iloc[idx]['target']
 
-def get_vocab(dataset):
-      vocab = build_vocab_from_iterator(yield_tokens(iter(dataset)), specials=["<unk>"])
-      vocab.set_default_index(vocab["<unk>"])
-      print(len(vocab))
-      text_pipeline = lambda x: vocab(tokenizer(x))
-      label_pipeline = lambda x: int(x) - 1
-      return text_pipeline,label_pipeline,len(vocab)
+  def yield_tokens(self,texts):
+    for text in texts:
+      yield tokenizer(text)
+         
+  def generate_vocab(self,dataset):
+    vocab = build_vocab_from_iterator(self.yield_tokens(iter(dataset)), specials=["<unk>"])
+    vocab.set_default_index(vocab["<unk>"])
+    return vocab
