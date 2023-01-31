@@ -16,9 +16,17 @@ from sklearn import feature_extraction, linear_model, model_selection, preproces
 
 
 def preprocess(
-    train_df: pd.DataFrame, test_df: pd.DataFrame, parameters: Dict[str, Any]
+    train_df: pd.DataFrame, test_df: pd.DataFrame
 ) -> Tuple[pd.DataFrame, pd.DataFrame, pd.Series, pd.Series]:
+    """ compute bag of words and split data
 
+    Args:
+        train_df (pd.DataFrame): train set
+        test_df (pd.DataFrame): test set
+
+    Returns:
+        train vectors, test vectors and targets
+    """
     logging.info("init CountVectorizer")
 
     count_vectorizer = feature_extraction.text.CountVectorizer()
@@ -34,7 +42,17 @@ def preprocess(
 
 def fit_and_evaluate(
     train_vectors: pd.DataFrame,test_vectors: pd.DataFrame, targets: pd.Series, parameters: Dict[str, Any]) -> pd.Series:
-    
+    """ train linear classifier using train vectors and evaluate its performance on the test set
+
+    Args:
+        train_vectors (pd.DataFrame)
+        test_vectors (pd.DataFrame)
+        targets (pd.Series)
+        parameters (Dict[str, Any]): parameters used for kaggle submission
+
+    Returns:
+        pd.Series: predictions used for
+    """    
     clf = linear_model.RidgeClassifier()
     logging.info("create classifier")
     scores = model_selection.cross_val_score(clf, train_vectors, targets, cv=parameters['cv'], scoring=parameters['scoring'])

@@ -11,6 +11,16 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 tokenizer = get_tokenizer('basic_english')
 
 def collate_batch(batch,text_pipeline:Callable, label_pipeline:Callable):
+  """Utility method for collating batch of texts
+
+  Args:
+      batch
+      text_pipeline 
+      label_pipeline 
+
+  Returns:
+     labels, tokenized text, offsets
+  """  
     label_list, text_list, offsets = [], [], [0]
     for (_text,_label) in batch:
          label_list.append(int(_label))
@@ -24,6 +34,10 @@ def collate_batch(batch,text_pipeline:Callable, label_pipeline:Callable):
 
 
 class DataWrapper(Dataset):
+  """ 
+  Dataset encapsulates the creation of vocab and the iteration over data 
+  
+  """
  
   def __init__(self,df:pd.DataFrame):
     self.df = df

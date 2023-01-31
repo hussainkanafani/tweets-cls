@@ -12,7 +12,7 @@ def create_pipeline(**kwargs) -> Pipeline:
         [
             node(
                 func=preprocess,
-                inputs=["tweets_train","tweets_test", "parameters"],
+                inputs=["tweets_train","tweets_test"],
                 outputs=["train_vectors","test_vectors","targets"],
                 name="preprocess",
             ),

@@ -1,7 +1,9 @@
 from torch import nn
 
 class TextClassificationModel(nn.Module):
-
+  """ 
+  Network that performs binary classification on text
+  """
   def __init__(self, vocab_size, embed_dim, num_class):
     super(TextClassificationModel, self).__init__()
     self.embedding = nn.EmbeddingBag(vocab_size, embed_dim, sparse=True)
@@ -10,7 +12,6 @@ class TextClassificationModel(nn.Module):
     self.fc = nn.Linear(embed_dim, num_class)
     self.sigmoid=nn.Sigmoid() 
     self.init_weights()
-    lr=0.001
 
   def init_weights(self):
     initrange = 0.5
@@ -20,7 +21,5 @@ class TextClassificationModel(nn.Module):
 
   def forward(self, text, offsets):
     embedded = self.embedding(text, offsets)
-    #return self.sigmoid(self.fc(embedded))
-    #x = self.batchnorm1(embedded)
     x = self.dropout(embedded)
     return self.sigmoid(self.fc(x).squeeze())
