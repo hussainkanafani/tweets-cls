@@ -3,7 +3,7 @@ from typing import Dict
 
 from kedro.pipeline import Pipeline
 
-from ml_tweets.pipelines import tfidf_lstm, bow_linear, torchtext
+from ml_tweets.pipelines import tfidf_lstm, bow_linear, torchtext,bert
 
 def register_pipelines() -> Dict[str, Pipeline]:
     """Register the project's pipelines.
@@ -16,5 +16,7 @@ def register_pipelines() -> Dict[str, Pipeline]:
         "bow_linear": bow_linear.create_pipeline(), 
         "tfidf_lstm": tfidf_lstm.create_pipeline(),
         "torchtext": torchtext.create_pipeline(),
+        "bert": bert.create_pipeline()
+
 
     }
